@@ -296,13 +296,12 @@
         }
 
         function rechercherPseudo() {
-            console.log("ddd");
             const type = document.getElementById("searchType").value; // "pseudo" ou "vraiNom"
             const val = document.getElementById("searchInput").value.trim().toLowerCase().replace(/\s+/g, '');
             const resultDiv = document.getElementById("search-result");
             // Le préfixe change selon le type de recherche
             const prefix = (type === "pseudo") ? "user-" : "name-";
-            if (!prefix + val) return alert("Entre quelque chose !");
+            if (!val) return alert("Entre quelque chose !");
             resultDiv.innerHTML = "<span style='color: #eab308;'>🔍 Scan en cours...</span>";
             let searchPeer = new Peer(undefined, peerOptions);
             searchPeer.on('open', () => {
