@@ -435,22 +435,27 @@
             input.value = "";
         }
 
-        function printMsg(user, text, side) {
+        function printMsg(user, text, side, realName = "Inconnu") {
             const box = document.getElementById("messages");
-            if (side === "sys") {
-                box.innerHTML += `<div class="sys"><i>${text}</i></div>`;
-            } else if (side === "action") {
-                box.innerHTML += `<div class="action-msg">★ ${user} ${text}</div>`;
+            const tooltip = `<span class="tooltip">${user}<br><small style="color:gray">${realName}</small></span>`;
+    
+            if (side === "me") {
+                box.innerHTML += `
+                <div class="msg-wrapper me">
+                    ${tooltip}
+                    <span class="pseudo-tag">${user}</span>
+                    <div class="msg-bubble">${text}</div>
+                </div>`;
             } else {
                 box.innerHTML += `
-                    <div class="msg-wrapper ${side}">
+                    <div class="msg-wrapper them">
+                         ${tooltip}
                         <span class="pseudo-tag">${user}</span>
                         <div class="msg-bubble">${text}</div>
                     </div>`;
             }
             box.scrollTop = box.scrollHeight;
         }
-
         document.getElementById("msgInput").addEventListener("keypress", (e) => {
             if (e.key === "Enter") envoyer();
         });
