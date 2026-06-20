@@ -164,12 +164,11 @@
                             <option value="pseudo">Par Pseudo</option>
                             <option value="vraiNom">Par Vrai Nom</option>
                         </select>
-                        <br/>
                         <input type="text" id="searchInput" placeholder="Entrer le nom ou pseudo..." style="margin: 0;">
                         <button onclick="rechercherPseudo()" style="width: auto; margin: 0; padding: 0 16px; background: #6366f1;">Chercher</button>
                 </div>
     <div id="search-result"></div>
-</div>
+    </div>
             </div>
 
             <div id="chat-interface">
@@ -458,23 +457,49 @@
 
         function printMsg(user, text, side, realName = "Inconnu") {
             const box = document.getElementById("messages");
-            const tooltip = `<span class="tooltip">${user}<br><small style="color:gray">${realName}</small></span>`;
     
-            if (side === "me") {
-                box.innerHTML += `
-                <div class="msg-wrapper me">
-                    ${tooltip}
-                    <span class="pseudo-tag">${user}</span>
-                    <div class="msg-bubble">${text}</div>
-                </div>`;
-            } else {
-                box.innerHTML += `
-                    <div class="msg-wrapper them">
-                         ${tooltip}
+            // Injection dynamique du style pour les éléments si non présents
+            if (!document.getElementById('dynamic-chat-styles')) {
+                const style = document.createElement('style');
+                style.id = 'dynamic-chat-styles';
+                style.innerHTML = `
+                    .sys { color: #94a3b8; text-align: center; font-size: 0.8rem; font-style: italic; margin: 10px 0; }
+                    .action-msg { color: #d946ef; text-align: center; font-style: italic; font-size: 0.9rem; margin: 10px 0; font-weight: 500; }
+                    .tooltip { visibility: hidden; width: 160px; background: #000; color: #fff; text-align: center; border-radius: 8px; padding: 8px; position: absolute; z-index: 10; bottom: 110%; left: 50%; transform: translateX(-50%); font-size: 0.75rem; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+                    .msg-wrapper:hover .tooltip { visibility: visible; opacity: 1; }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // 1. Gestion des messages SYSTÈME (violet/centré)
+            if (side === "sys") {
+                box.innerHTML += `<div class="sys"><i>${text}</i></div>`;
+            } 
+            // 2. Gestion des ACTIONS (violet/centré)
+            else if (side === "action") {
+                box.innerHTML += `<div class="action-msg">★ ${user} ${text}</div>`;
+            } 
+            // 3. Gestion des MESSAGES CLASSIC (avec tooltips)
+            else {
+                const tooltip = `<span class="tooltip">${user}<br><small style="color:gray">${realName}</small></span>`;
+        
+                if (side === "me") {
+                    box.innerHTML += `
+                    <div class="msg-wrapper me">
+                        ${tooltip}
                         <span class="pseudo-tag">${user}</span>
                         <div class="msg-bubble">${text}</div>
                     </div>`;
+                } else {
+                    box.innerHTML += `
+                    <div class="msg-wrapper them">
+                        ${tooltip}
+                        <span class="pseudo-tag">${user}</span>
+                        <div class="msg-bubble">${text}</div>
+                    </div>`;
+                }
             }
+    
             box.scrollTop = box.scrollHeight;
         }
         document.getElementById("msgInput").addEventListener("keypress", (e) => {
