@@ -105,6 +105,11 @@
             left: 0;
             font-size: 0.75rem;
         }
+        .no-selectable {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         .msg-wrapper:hover .tooltip { visibility: visible; }
         .pseudo-tag { font-size: 0.75rem; color: var(--sys-text); margin-bottom: 2px; font-weight: 600; padding: 0 4px; }
         
@@ -156,7 +161,11 @@
                     <button onclick="creerSalon()">Créer</button>
                     <button onclick="rejoindreSalon()" class="secondary">Rejoindre</button>
                 </div>
-
+                <div class="no-selectable">
+                    <p>Id d'utilisateur final :</p>
+                    <br>
+                    <p id="id-result"></p>
+                </div>
                 <div class="search-area">
                     <p style="color: #aaa; margin-bottom: 5px; font-size: 0.9rem; text-align: left;">🔍 Rechercher un utilisateur :</p>
                     <div style="display: flex; gap: 8px;">
@@ -198,6 +207,18 @@
             secure: true,
             port: 443
         };
+        function mettreAJourID() {
+            const idElement = document.getElementById("id-result");
+            if (idElement) {
+                // On modifie textContent au lieu de innerHTML pour éviter les problèmes de parsing
+                idElement.textContent = getUserId();
+            }
+        }
+
+        // 3. Ajoutez des écouteurs sur les champs pour mettre à jour l'ID en temps réel
+        document.getElementById("pseudoInput").addEventListener("input", mettreAJourID);
+        document.getElementById("vraiNomInput").addEventListener("input", mettreAJourID);
+        document.getElementById("roomInput").addEventListener("input", mettreAJourID);
         function nettoyerTexte(texte) {
             return texte
                 // 1. Remplace les espaces par des tirets bas
@@ -211,6 +232,12 @@
                 // 5. Convertit tout en minuscules
                 .toLowerCase();
         }        
+        function getUserId() {
+            const room = document.getElementById("roomInput").value.trim();
+            monPseudo = document.getElementById("pseudoInput").value.trim() || "Anonyme";
+            monVraiNom = document.getElementById("vraiNomInput").value.trim() || "Inconnu";
+            return nettoyerTexte(monPseudo + "#" + monVraiNom + "@" + room)
+        }
         function toggleTheme() {
             const current = document.documentElement.getAttribute('data-theme');
             let next = 'light';
